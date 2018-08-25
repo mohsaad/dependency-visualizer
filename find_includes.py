@@ -21,12 +21,10 @@ def find_includes(filename):
 
 
 def build_map_includes(directory):
-	files = os.listdir(directory)
 	heierarchy = {}
-	for name in files:
-		heierarchy[name] = find_includes(name)
+	for(dirpath, dirnames, filenames) in os.walk(directory):
+		print(dirpath, dirnames, filename)
 
-	print(heierarchy)
 
 if __name__ == '__main__':
 	print build_map_includes(sys.argv[1])
