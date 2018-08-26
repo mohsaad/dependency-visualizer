@@ -2,6 +2,9 @@
 
 import os
 import sys
+import re
+
+cpp_extensions = set(['cc', 'h', 'hpp', 'cpp'])
 
 def find_includes(filename):
 	files = []
@@ -19,12 +22,30 @@ def find_includes(filename):
 	f.close()
 	return files
 
+def check_filename(filename):
+	filename_arr = filename.split('.')
+	if(len(filename_arr) < 2):
+		return False
+	
+	if filename_arr[1] not in cpp_extensions:
+		return False
 
-def build_map_includes(directory):
+	return True
+
+def build_map_includes(directory, prepend_path = ''):
 	heierarchy = {}
-	for(dirpath, dirnames, filenames) in os.walk(directory):
-		print(dirpath, dirnames, filename)
 
+	
+	for(dirpath, dirnames, filenames) in os.walk(directory):
+		for filename in filenames:
+			if(check_filename(filename)):
+				path = dirpath.split(directory)[1]
+				heierarchy[path + filename]  = find_includes(dirpath + '/' +  filename)
+			
+	return heierarchy
 
 if __name__ == '__main__':
-	print build_map_includes(sys.argv[1])
+	if(len(sys.argv) > 2):
+		build_map_includes(sys.argv[1], sys.argv[2])
+	else:
+		build_map_includes(sys.argv[1])
